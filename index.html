@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>學會競賽榮譽榜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#FDF0DC; --paper:#FFF9EF; --white:#FFFFFF;
+  --navy:#0B1A3A; --navy-2:#24345C; --muted:#5D6579; --line:#EADBC2;
+  --orange:#F7820F; --orange-soft:#FFE7CC;
+  --gold:#F2B705; --silver:#B4BCCA; --bronze:#CD7C43;
+  --r:18px; --sh:5px 5px 0 var(--navy); --sh-s:3px 3px 0 var(--navy);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--navy);font-family:'Noto Sans TC',system-ui,-apple-system,'Microsoft JhengHei',sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1480px;margin:0 auto;padding:0 32px}
+.num{font-family:'Outfit','Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums}
+
+/* ---------- Header ---------- */
+.topbar{display:flex;justify-content:space-between;gap:16px;padding:22px 0 12px;border-bottom:2px solid var(--navy);font-size:13px;font-weight:700;letter-spacing:.18em}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:30px 0 28px;border-bottom:6px solid var(--navy)}
+.hero h1{margin:0;font-size:clamp(34px,5vw,62px);font-weight:900;letter-spacing:.02em;line-height:1.15;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.pill-title{background:var(--orange);border:3px solid var(--navy);border-radius:999px;padding:0 .38em;box-shadow:var(--sh)}
+.hero p{margin:16px 0 0;color:var(--muted);font-weight:700;font-size:15px;line-height:1.6}
+.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:14px;flex-shrink:0}
+.stamp{border:2px solid var(--navy);border-radius:999px;padding:6px 16px;font-weight:700;font-size:14px;background:var(--paper);white-space:nowrap}
+
+.btn{font-weight:800;border:2.5px solid var(--navy);border-radius:14px;background:var(--paper);padding:9px 18px;cursor:pointer;box-shadow:var(--sh-s);transition:transform .08s,box-shadow .08s;white-space:nowrap}
+.btn:hover{background:var(--white)}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--navy)}
+.btn-orange{background:var(--orange);font-size:16px;padding:11px 26px}
+.btn-orange:hover{background:#FF9126}
+.btn.sm{padding:7px 14px;font-size:14px;border-radius:12px}
+
+/* ---------- Year bar & tabs ---------- */
+.yearbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:24px 0}
+.flabel{font-weight:900;font-size:15px;white-space:nowrap}
+.sel{appearance:none;-webkit-appearance:none;font-weight:800;border:2.5px solid var(--navy);border-radius:999px;padding:9px 42px 9px 20px;cursor:pointer;
+  background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%230B1A3A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 16px center/12px;
+  box-shadow:var(--sh-s)}
+.sel.sm{padding:7px 40px 7px 16px;font-size:14px;max-width:100%}
+.tilde{font-weight:900;font-size:18px}
+
+.tabrow{border-top:2px solid var(--navy);border-bottom:2px solid var(--navy)}
+.tabs{display:flex;gap:12px;flex-wrap:wrap;padding:16px 0}
+.tab{border:2.5px solid var(--navy);border-radius:999px;padding:10px 22px;font-weight:900;font-size:16px;background:var(--paper);cursor:pointer}
+.tab .no{font-family:'Outfit',sans-serif;color:var(--orange);margin-right:8px;font-size:13px;font-weight:800}
+.tab.active{background:var(--navy);color:var(--paper)}
+.tab:not(.active):hover{background:var(--white)}
+
+/* ---------- Section ---------- */
+section{display:none;padding:36px 0 12px}
+section.show{display:block}
+.sec-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:16px;border-bottom:3px solid var(--navy);padding-bottom:12px;margin:0 0 24px}
+.sec-h .no{font-family:'Outfit',sans-serif;font-weight:800;font-size:46px;line-height:1;color:var(--orange);-webkit-text-stroke:1.5px var(--navy)}
+.sec-h h2{margin:0;font-size:32px;font-weight:900;line-height:1.2}
+.sec-h .note{margin-left:auto;color:var(--muted);font-weight:700;font-size:13px}
+
+.card{background:var(--paper);border:2.5px solid var(--navy);border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.card-h h3{margin:0;font-size:20px;font-weight:900}
+.tag{border:1.5px solid var(--navy);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700;background:var(--white);white-space:nowrap}
+
+/* ---------- Filter panel ---------- */
+.panel{display:flex;flex-direction:column;gap:14px;margin-bottom:30px}
+.frow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.frow .flabel{min-width:44px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--navy);border-radius:999px;padding:6px 15px;font-weight:700;font-size:14px;background:var(--white);cursor:pointer}
+.chip:hover{background:var(--orange-soft)}
+.chip.on{background:var(--navy);color:var(--paper)}
+.chip .c{font-family:'Outfit',sans-serif;font-weight:700;opacity:.65;margin-left:6px;font-size:12.5px}
+.search{border:2.5px solid var(--navy);border-radius:999px;padding:8px 18px;background:var(--white);min-width:280px;font-weight:500;font-size:14px;outline:none}
+.search:focus{box-shadow:0 0 0 3px var(--orange-soft)}
+.spacer{flex:1}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:22px;margin:0 0 36px}
+.kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpi{position:relative;background:var(--paper);border:2.5px solid var(--navy);border-radius:var(--r);box-shadow:var(--sh);padding:18px 22px 16px;min-width:0}
+.kpi .lbl{font-weight:900;font-size:14px}
+.kpi .val{font-family:'Outfit',sans-serif;font-weight:800;font-size:44px;line-height:1.15;margin-top:12px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .val small{font-family:'Noto Sans TC',sans-serif;font-size:16px;font-weight:900;margin-left:4px}
+.kpi .val.name{font-family:'Noto Sans TC',sans-serif;font-weight:900;font-size:32px;line-height:1.55}
+.kpi .sub{border-top:1.5px dashed rgba(11,26,58,.28);margin-top:10px;padding-top:10px;color:var(--muted);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.orange{background:var(--orange)}
+.kpi.orange .sub{color:var(--navy)}
+.kpi.navy{background:var(--navy);color:var(--paper);box-shadow:5px 5px 0 #3B4A70}
+.kpi.navy .val{color:var(--orange)}
+.kpi.navy .sub{color:#C5CCDC;border-color:rgba(255,255,255,.28)}
+.medal{position:absolute;top:15px;right:16px;width:26px;height:26px;border-radius:50%;border:2px solid var(--navy);display:grid;place-items:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:13px}
+.m1{background:var(--gold)} .m2{background:var(--silver)} .m3{background:var(--bronze);color:var(--white)}
+
+/* ---------- Charts ---------- */
+.grid2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:26px;margin-bottom:30px}
+.grid2.rev{grid-template-columns:minmax(0,1fr) minmax(0,1.55fr)}
+.chart-box{position:relative;height:320px}
+.scroll-y{max-height:320px;overflow-y:auto;padding-right:4px}
+.no-chart{display:grid;place-items:center;height:100%;color:var(--muted);font-weight:700;font-size:14px}
+
+/* ---------- Table ---------- */
+.tbl-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.count{font-weight:900}
+.count b{font-family:'Outfit',sans-serif;font-size:20px;color:var(--orange);margin:0 3px}
+.tbl-wrap{overflow:auto;max-height:640px;border:2.5px solid var(--navy);border-radius:14px;background:var(--white)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+th{position:sticky;top:0;z-index:1;background:var(--navy);color:var(--paper);text-align:left;padding:12px 14px;font-weight:700;white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{background:var(--navy-2)}
+th .ar{color:var(--orange);margin-left:4px;font-size:11px}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.6}
+tbody tr:nth-child(even) td{background:#FFF8EE}
+tbody tr:hover td{background:var(--orange-soft)}
+td.nw{white-space:nowrap}
+td.yr{font-family:'Outfit',sans-serif;font-weight:700;white-space:nowrap}
+td.topic{min-width:260px;font-weight:700}
+td.mem{min-width:240px;color:var(--navy-2)}
+td.empty{text-align:center;color:var(--muted);font-weight:700;padding:42px 14px}
+.badge{display:inline-block;border:1.5px solid var(--navy);border-radius:999px;padding:1px 10px;font-weight:800;font-size:12.5px;white-space:nowrap}
+.b1{background:var(--gold)} .b2{background:var(--silver)} .b3{background:var(--bronze);color:var(--white)}
+.b4{background:var(--navy);color:var(--paper)} .b5{background:var(--orange)} .b0{background:var(--paper)}
+.bx{background:var(--orange-soft)} .bi{background:#DCE3F2}
+.orig{display:block;color:var(--muted);font-size:12px;margin-top:4px;white-space:nowrap}
+
+/* ---------- Leaderboard ---------- */
+.lb{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:grid;grid-template-columns:28px 76px minmax(0,1fr) 34px;align-items:center;gap:10px;border:0;background:transparent;padding:7px 8px;border-radius:10px;cursor:pointer;text-align:left;width:100%}
+.lb-row:hover{background:var(--white)}
+.lb-row.on{background:var(--navy);color:var(--paper)}
+.lb-no{font-family:'Outfit',sans-serif;font-weight:800;color:var(--orange);text-align:right}
+.lb-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-bar{display:flex;height:14px;border:1.5px solid var(--navy);border-radius:999px;overflow:hidden;background:var(--white)}
+.lb-bar i{display:block;height:100%}
+.lb-bar .e{background:var(--orange)} .lb-bar .i{background:var(--navy-2)}
+.lb-row.on .lb-bar{border-color:var(--paper)}
+.lb-row.on .lb-bar .i{background:#8FA0C8}
+.lb-n{font-family:'Outfit',sans-serif;font-weight:800;text-align:right}
+.legend{display:flex;gap:14px;font-size:12px;font-weight:700;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border:1.5px solid var(--navy);border-radius:3px;margin-right:5px;vertical-align:-1px}
+.hint{display:grid;place-items:center;min-height:260px;color:var(--muted);font-weight:700;text-align:center;line-height:1.8;padding:20px}
+
+/* ---------- Footer / loading ---------- */
+footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--muted)}
+.warn{background:var(--orange-soft);border:2px solid var(--navy);border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;margin-top:20px;display:none}
+.loading{position:fixed;inset:0;background:rgba(253,240,220,.88);display:flex;align-items:center;justify-content:center;z-index:50}
+.loading.hide{display:none}
+.loading .box{background:var(--paper);border:3px solid var(--navy);border-radius:20px;box-shadow:var(--sh);padding:26px 34px;font-weight:900;font-size:18px;display:flex;align-items:center;gap:14px;max-width:90vw}
+.spin{width:22px;height:22px;border:3px solid var(--orange-soft);border-top-color:var(--orange);border-radius:50%;animation:sp .8s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---------- RWD ---------- */
+@media (max-width:1200px){
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid2,.grid2.rev{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  .topbar{flex-direction:column;gap:6px;letter-spacing:.1em}
+  .hero{flex-direction:column;align-items:flex-start}
+  .hero-side{align-items:flex-start;flex-direction:row;flex-wrap:wrap}
+  .kpis,.kpis.k4{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .kpi{padding:14px 16px}
+  .kpi .val{font-size:34px}
+  .kpi .val.name{font-size:24px}
+  .sec-h .no{font-size:36px} .sec-h h2{font-size:24px}
+  .sec-h .note{margin-left:0}
+  .search{min-width:0;width:100%}
+  .card{padding:18px 16px}
+  .chart-box{height:260px}
+}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading"><div class="box"><span class="spin"></span><span id="loadingText">資料讀取中…</span></div></div>
+
+<header class="wrap">
+  <div class="topbar">
+    <span>CHI MEI MEDICAL CENTER ・ 教學部臨床技能中心</span>
+    <span>COMPETITION HONOR ROLL ・ <span id="yearSpan" class="num">—</span></span>
+  </div>
+  <div class="hero">
+    <div>
+      <h1>學會競賽 <span class="pill-title">榮譽榜</span></h1>
+      <p>彙整歷年學會 OSCE 教案／擬真情境類競賽與院內 OSCE 教案競賽得獎紀錄，<br>可依年度、學會、單位與團隊成員查詢。</p>
+    </div>
+    <div class="hero-side">
+      <span class="stamp">資料更新 <span id="updatedAt" class="num">—</span></span>
+      <button class="btn btn-orange" id="refreshBtn">↻ 重新整理</button>
+    </div>
+  </div>
+  <div class="warn" id="warn"></div>
+  <div class="yearbar">
+    <span class="flabel">年度範圍</span>
+    <select class="sel" id="yFrom"></select>
+    <span class="tilde">～</span>
+    <select class="sel" id="yTo"></select>
+    <button class="btn" id="allYears">全部年度</button>
+  </div>
+</header>
+
+<div class="tabrow">
+  <nav class="wrap tabs" id="tabs">
+    <button class="tab active" data-tab="ext"><span class="no">01</span>學會競賽得獎</button>
+    <button class="tab" data-tab="int"><span class="no">02</span>院內 OSCE 教案競賽</button>
+    <button class="tab" data-tab="per"><span class="no">03</span>團隊成員查詢</button>
+  </nav>
+</div>
+
+<main class="wrap">
+
+  <!-- ============ 01 學會競賽 ============ -->
+  <section id="sec-ext" class="show">
+    <div class="sec-h"><span class="no">01</span><h2>學會競賽得獎</h2><span class="note">學會 OSCE 教案／擬真情境類競賽</span></div>
+
+    <div class="card panel">
+      <div class="frow"><span class="flabel">學會</span><div class="chips" id="extSoc"></div></div>
+      <div class="frow">
+        <span class="flabel">單位</span><select class="sel sm" id="extUnit"></select>
+        <input class="search" id="extQ" type="search" placeholder="搜尋教案主題、團隊成員、單位">
+        <span class="spacer"></span>
+        <button class="btn sm" id="extReset">清除條件</button>
+      </div>
+    </div>
+
+    <div class="kpis" id="extKpi"></div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h3>各年度得獎數</h3><span class="tag">堆疊：名次 ・ 數字：當年合計</span></div>
+        <div class="chart-box"><canvas id="cExtYear"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>學會得獎分布</h3><span class="tag">得獎次數</span></div>
+        <div class="scroll-y"><div class="chart-box" id="bExtSoc"><canvas id="cExtSoc"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tbl-bar">
+        <h3 style="margin:0;font-size:20px;font-weight:900">得獎明細</h3>
+        <span class="count">共<b id="extCount">0</b>筆</span>
+        <span class="spacer"></span>
+        <button class="btn sm" data-csv="ext">匯出 CSV</button>
+      </div>
+      <div class="tbl-wrap"><table><thead id="extHead"></thead><tbody id="extBody"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- ============ 02 院內 ============ -->
+  <section id="sec-int">
+    <div class="sec-h"><span class="no">02</span><h2>院內 OSCE 教案競賽</h2><span class="note">跨領域／單領域教案競賽</span></div>
+
+    <div class="card panel">
+      <div class="frow"><span class="flabel">競賽別</span><div class="chips" id="intCat"></div></div>
+      <div class="frow">
+        <span class="flabel">單位</span><select class="sel sm" id="intUnit"></select>
+        <input class="search" id="intQ" type="search" placeholder="搜尋教案主題、團隊成員、單位">
+        <span class="spacer"></span>
+        <button class="btn sm" id="intReset">清除條件</button>
+      </div>
+    </div>
+
+    <div class="kpis" id="intKpi"></div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h3>各年度得獎數</h3><span class="tag">堆疊：獎項 ・ 數字：當年合計</span></div>
+        <div class="chart-box"><canvas id="cIntYear"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>單位得獎次數排行榜</h3><span class="tag">前三名以橘色標示</span></div>
+        <div class="scroll-y"><div class="chart-box" id="bIntUnit"><canvas id="cIntUnit"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tbl-bar">
+        <h3 style="margin:0;font-size:20px;font-weight:900">得獎明細</h3>
+        <span class="count">共<b id="intCount">0</b>筆</span>
+        <span class="spacer"></span>
+        <button class="btn sm" data-csv="int">匯出 CSV</button>
+      </div>
+      <div class="tbl-wrap"><table><thead id="intHead"></thead><tbody id="intBody"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- ============ 03 團隊成員 ============ -->
+  <section id="sec-per">
+    <div class="sec-h"><span class="no">03</span><h2>團隊成員查詢</h2><span class="note">合併學會與院內競賽，姓名以「、」拆分計算</span></div>
+
+    <div class="card panel">
+      <div class="frow">
+        <span class="flabel">姓名</span>
+        <input class="search" id="perQ" type="search" placeholder="輸入姓名，或點選下方排行榜">
+        <span class="spacer"></span>
+        <button class="btn sm" id="perReset">清除</button>
+      </div>
+    </div>
+
+    <div class="kpis k4" id="perKpi"></div>
+
+    <div class="grid2 rev">
+      <div class="card">
+        <div class="card-h"><h3>得獎次數排行 TOP 20</h3>
+          <span class="legend"><span><i style="background:var(--orange)"></i>學會</span><span><i style="background:var(--navy-2)"></i>院內</span></span></div>
+        <div class="lb" id="perBoard"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3 id="perTitle">得獎紀錄</h3><span class="count" id="perCountWrap" style="display:none">共<b id="perCount">0</b>筆</span></div>
+        <div id="perResult"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span id="maintainer"></span>
+    <span>資料來源：Google 試算表「學會競賽歷年得獎紀錄」</span>
+  </footer>
+</main>
+
+<script>
+/* ================= 設定 ================= */
+// 放在 GitHub Pages 時，填入 GAS 網頁應用程式 /exec 網址；放在 GAS 內則留空
+const API_URL = 'https://script.google.com/macros/s/AKfycby5RuJZN40ZrlOz8f7yuLdgOTulMi0OAOvlHsZezIOZj0d9VDkExMVmyNJEF9gVIjhcwQ/exec';
+const MAINTAINER = '資料維護人：教學部 英云 #57425';
+
+/* ================= 常數 ================= */
+const EXT_ORDER = ['第一名', '第二名', '第三名', '其他'];
+const INT_ORDER = ['第一名', '第二名', '第三名', '佳作', '潛力獎', '其他'];
+const EXT_COLOR = { 第一名:'#F2B705', 第二名:'#B4BCCA', 第三名:'#CD7C43', 其他:'#24345C' };
+const INT_COLOR = { 第一名:'#F2B705', 第二名:'#B4BCCA', 第三名:'#CD7C43', 佳作:'#24345C', 潛力獎:'#F7820F', 其他:'#8C93A6' };
+const BADGE = { 第一名:'b1', 第二名:'b2', 第三名:'b3', 佳作:'b4', 潛力獎:'b5', 其他:'b0' };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const br = s => esc(s).replace(/\r?\n/g, '<br>');
+const zh = (a, b) => String(a).localeCompare(String(b), 'zh-Hant');
+
+/* ================= 狀態 ================= */
+let DATA = { external: [], internal: [] };
+let YMIN = null, YMAX = null;
+const charts = {};
+const S = {
+  tab: 'ext', yFrom: null, yTo: null,
+  ext: { soc: new Set(), unit: '', q: '', sort: { k: 'year', d: -1 } },
+  int: { cat: new Set(), unit: '', q: '', sort: { k: 'year', d: -1 } },
+  per: { q: '' }
+};
+
+/* ================= 資料正規化 ================= */
+function toYear(v) {
+  if (typeof v === 'number') return v;
+  const m = String(v || '').match(/\d+/);
+  if (!m) return null;
+  let n = parseInt(m[0], 10);
+  if (n > 1911) n -= 1911;
+  return n || null;
+}
+function extRank(r) {
+  const s = String(r.rankGroup || r.rank || '').replace(/\s/g, '');
+  if (/第一名|冠軍/.test(s)) return '第一名';
+  if (/第二名|亞軍/.test(s)) return '第二名';
+  if (/第三名|季軍/.test(s)) return '第三名';
+  return '其他';
+}
+function intAward(v) {
+  const s = String(v || '').replace(/\s/g, '');
+  if (/第一/.test(s)) return '第一名';
+  if (/第二/.test(s)) return '第二名';
+  if (/第三/.test(s)) return '第三名';
+  if (/佳作/.test(s)) return '佳作';
+  if (/潛力/.test(s)) return '潛力獎';
+  return '其他';
+}
+// 從團隊成員欄拆出姓名（含【指導老師：○○○】括號內的姓名）
+function people(raw) {
+  const t = String(raw || '').replace(/[【\[（(]([^】\]）)]*)[】\]）)]/g, (m, inner) => '、' + inner.replace(/^[^：:]*[：:]/, ''));
+  const seen = new Set();
+  t.split(/[、,，;；\/\n\r\s]+/).forEach(n => {
+    n = n.replace(/^(指導(老師|教師)|老師|醫師)[：:]?/, '').trim();
+    if (n.length >= 2 && n.length <= 5 && !/指導|老師|教師|團隊|等人/.test(n)) seen.add(n);
+  });
+  return [...seen];
+}
+function prep(d) {
+  DATA.external = (d.external || []).map(r => Object.assign({}, r, { year: toYear(r.year), R: extRank(r) }));
+  DATA.internal = (d.internal || []).map(r => Object.assign({}, r, {
+    year: toYear(r.year), category: String(r.category || '').trim() || '未分類', A: intAward(r.award)
+  }));
+  const ys = DATA.external.concat(DATA.internal).map(r => r.year).filter(y => y != null);
+  YMIN = ys.length ? Math.min(...ys) : null;
+  YMAX = ys.length ? Math.max(...ys) : null;
+  S.yFrom = YMIN; S.yTo = YMAX;
+}
+
+/* ================= 共用 ================= */
+function inYear(r) {
+  if (YMIN == null) return true;
+  if (r.year == null) return S.yFrom === YMIN && S.yTo === YMAX;
+  return r.year >= S.yFrom && r.year <= S.yTo;
+}
+function matchQ(r, q, keys) {
+  if (!q) return true;
+  q = q.trim().toLowerCase();
+  return keys.some(k => String(r[k] || '').toLowerCase().includes(q));
+}
+function countBy(rows, fn) {
+  const m = new Map();
+  rows.forEach(r => { const k = fn(r); if (k) m.set(k, (m.get(k) || 0) + 1); });
+  return m;
+}
+function yrLabel() { return YMIN == null ? '—' : `${S.yFrom}–${S.yTo} 年`; }
+function kpiHTML(list) {
+  return list.map(k => `<div class="kpi ${k.cls || ''}">
+    ${k.medal ? `<span class="medal m${k.medal}">${k.medal}</span>` : ''}
+    <div class="lbl">${k.lbl}</div>
+    <div class="val ${k.isName ? 'name' : ''}">${k.val}${k.unit ? `<small>${k.unit}</small>` : ''}</div>
+    <div class="sub">${k.sub || '&nbsp;'}</div></div>`).join('');
+}
+function badge(k, orig) {
+  const o = orig && orig.replace(/\s/g, '') !== k ? `<span class="orig">${esc(orig)}</span>` : '';
+  return `<span class="badge ${BADGE[k] || 'b0'}">${esc(k)}</span>${o}`;
+}
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+/* ================= Chart.js ================= */
+const HAS_CHART = typeof window.Chart !== 'undefined';
+if (HAS_CHART) {
+  Chart.defaults.font.family = "'Noto Sans TC','Outfit',sans-serif";
+  Chart.defaults.font.weight = '700';
+  Chart.defaults.color = '#0B1A3A';
+  Chart.register({
+    id: 'totals',
+    afterDatasetsDraw(c, _a, o) {
+      if (!o || !o.on) return;
+      const ctx = c.ctx, n = c.data.labels.length;
+      ctx.save(); ctx.font = "800 13px Outfit, sans-serif"; ctx.fillStyle = '#0B1A3A'; ctx.textAlign = 'center';
+      for (let i = 0; i < n; i++) {
+        let sum = 0, top = Infinity, x = null;
+        c.data.datasets.forEach((ds, di) => {
+          if (!c.isDatasetVisible(di)) return;
+          const v = ds.data[i] || 0, el = c.getDatasetMeta(di).data[i];
+          sum += v; if (el && v) { top = Math.min(top, el.y); x = el.x; }
+        });
+        if (sum && x != null) ctx.fillText(sum, x, top - 7);
+      }
+      ctx.restore();
+    }
+  });
+  Chart.register({
+    id: 'vals',
+    afterDatasetsDraw(c, _a, o) {
+      if (!o || !o.on) return;
+      const ctx = c.ctx;
+      ctx.save(); ctx.font = "800 12.5px Outfit, sans-serif"; ctx.fillStyle = '#0B1A3A'; ctx.textBaseline = 'middle';
+      c.getDatasetMeta(0).data.forEach((el, i) => ctx.fillText(c.data.datasets[0].data[i], el.x + 7, el.y));
+      ctx.restore();
+    }
+  });
+}
+function makeChart(id, cfg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+  if (!HAS_CHART) { el.parentElement.innerHTML = `<div class="no-chart">圖表元件載入失敗</div><canvas id="${id}" hidden></canvas>`; return; }
+  charts[id] = new Chart(el, cfg);
+}
+function yearStack(id, rows, order, keyFn, colors) {
+  const years = [];
+  if (YMIN != null) for (let y = S.yFrom; y <= S.yTo; y++) years.push(y);
+  const datasets = order.map(k => ({
+    label: k, data: years.map(y => rows.filter(r => r.year === y && keyFn(r) === k).length),
+    backgroundColor: colors[k], borderColor: '#0B1A3A', borderWidth: 1.5, maxBarThickness: 44
+  })).filter(d => d.data.some(v => v));
+  makeChart(id, {
+    type: 'bar', data: { labels: years.map(String), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, layout: { padding: { top: 22 } },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Outfit', weight: '700' } } },
+        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(11,26,58,.08)' }, border: { display: false } }
+      },
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 12, padding: 16 } },
+        tooltip: { callbacks: { title: it => it[0].label + ' 年' } },
+        totals: { on: true }
+      }
+    }
+  });
+}
+function hbar(id, boxId, pairs) {
+  const box = document.getElementById(boxId);
+  box.style.height = Math.max(240, pairs.length * 30 + 36) + 'px';
+  makeChart(id, {
+    type: 'bar',
+    data: { labels: pairs.map(p => p[0]), datasets: [{
+      data: pairs.map(p => p[1]),
+      backgroundColor: pairs.map((p, i) => i < 3 ? '#F7820F' : '#0B1A3A'),
+      borderColor: '#0B1A3A', borderWidth: 1.5, borderRadius: 5, maxBarThickness: 20
+    }] },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false, layout: { padding: { right: 30 } },
+      scales: {
+        x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(11,26,58,.08)' }, border: { display: false } },
+        y: { grid: { display: false }, ticks: { autoSkip: false, callback(v) { const l = this.getLabelForValue(v); return l.length > 11 ? l.slice(0, 11) + '…' : l; } } }
+      },
+      plugins: { legend: { display: false }, vals: { on: true } }
+    }
+  });
+}
+
+/* ================= 表格 ================= */
+const TABLES = {
+  ext: {
+    head: 'extHead', body: 'extBody', count: 'extCount', file: '學會競賽得獎',
+    cols: [
+      { k: 'society', t: '學會', cls: 'nw' },
+      { k: 'year', t: '年度', cls: 'yr' },
+      { k: 'R', t: '名次', cls: 'nw', f: r => badge(r.R, r.rank), csv: r => r.rank || r.R },
+      { k: 'unit', t: '單位', cls: 'nw' },
+      { k: 'topic', t: '教案主題', cls: 'topic' },
+      { k: 'members', t: '團隊成員', cls: 'mem' }
+    ]
+  },
+  int: {
+    head: 'intHead', body: 'intBody', count: 'intCount', file: '院內OSCE教案競賽',
+    cols: [
+      { k: 'year', t: '年度', cls: 'yr' },
+      { k: 'category', t: '競賽別', cls: 'nw' },
+      { k: 'A', t: '獎項', cls: 'nw', f: r => badge(r.A, r.award), csv: r => r.award || r.A },
+      { k: 'unit', t: '投稿單位', cls: 'nw' },
+      { k: 'topic', t: '教案主題', cls: 'topic' },
+      { k: 'members', t: '團隊成員', cls: 'mem' }
+    ]
+  }
+};
+const LAST_ROWS = { ext: [], int: [] };
+
+function sortVal(r, k) {
+  if (k === 'year') return r.year == null ? -1 : r.year;
+  if (k === 'R') return EXT_ORDER.indexOf(r.R);
+  if (k === 'A') return INT_ORDER.indexOf(r.A);
+  return r[k] || '';
+}
+function sortRows(rows, st, rankKey, order) {
+  return [...rows].sort((a, b) => {
+    const va = sortVal(a, st.k), vb = sortVal(b, st.k);
+    let c = (typeof va === 'number' && typeof vb === 'number') ? va - vb : zh(va, vb);
+    if (c) return c * st.d;
+    c = (b.year || 0) - (a.year || 0);
+    if (c) return c;
+    return order.indexOf(a[rankKey]) - order.indexOf(b[rankKey]);
+  });
+}
+function renderTable(tab, rows) {
+  const cfg = TABLES[tab], st = S[tab].sort;
+  rows = tab === 'ext' ? sortRows(rows, st, 'R', EXT_ORDER) : sortRows(rows, st, 'A', INT_ORDER);
+  LAST_ROWS[tab] = rows;
+  document.getElementById(cfg.count).textContent = rows.length;
+  document.getElementById(cfg.head).innerHTML = '<tr>' + cfg.cols.map(c =>
+    `<th data-k="${c.k}">${c.t}${st.k === c.k ? `<span class="ar">${st.d > 0 ? '▲' : '▼'}</span>` : ''}</th>`).join('') + '</tr>';
+  document.getElementById(cfg.body).innerHTML = rows.length
+    ? rows.map(r => '<tr>' + cfg.cols.map(c => `<td class="${c.cls || ''}">${c.f ? c.f(r) : br(r[c.k] == null ? '' : r[c.k])}</td>`).join('') + '</tr>').join('')
+    : `<tr><td class="empty" colspan="${cfg.cols.length}">沒有符合條件的資料</td></tr>`;
+}
+function exportCSV(tab) {
+  const cfg = TABLES[tab];
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const lines = [cfg.cols.map(c => q(c.t)).join(',')]
+    .concat(LAST_ROWS[tab].map(r => cfg.cols.map(c => q(c.csv ? c.csv(r) : r[c.k])).join(',')));
+  const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${cfg.file}_${S.yFrom}-${S.yTo}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ================= 01 學會競賽 ================= */
+function renderExt() {
+  const base = DATA.external.filter(inYear);
+  const rows = base.filter(r =>
+    (!S.ext.soc.size || S.ext.soc.has(r.society)) &&
+    (!S.ext.unit || r.unit === S.ext.unit) &&
+    matchQ(r, S.ext.q, ['society', 'unit', 'topic', 'members', 'rank']));
+  const c = countBy(rows, r => r.R);
+  const units = new Set(rows.map(r => r.unit).filter(Boolean)).size;
+  $('#extKpi').innerHTML = kpiHTML([
+    { lbl: '總獲獎次數', val: rows.length, unit: '次', sub: yrLabel(), cls: 'orange' },
+    { lbl: '第一名', val: c.get('第一名') || 0, unit: '次', medal: 1, sub: '含特優、金獎等同級' },
+    { lbl: '第二名', val: c.get('第二名') || 0, unit: '次', medal: 2, sub: '含優等、銀獎等同級' },
+    { lbl: '第三名', val: c.get('第三名') || 0, unit: '次', medal: 3, sub: '含優秀、銅獎等同級' },
+    { lbl: '其他獎項', val: c.get('其他') || 0, unit: '次', sub: '佳作、優選、特別獎等' },
+    { lbl: '得獎單位', val: units, unit: '個', sub: '依「名次彙整」欄歸類', cls: 'navy' }
+  ]);
+  yearStack('cExtYear', rows, EXT_ORDER, r => r.R, EXT_COLOR);
+  hbar('cExtSoc', 'bExtSoc', [...countBy(rows, r => r.society).entries()].sort((a, b) => b[1] - a[1] || zh(a[0], b[0])));
+  renderTable('ext', rows);
+}
+
+/* ================= 02 院內 ================= */
+function renderInt() {
+  const base = DATA.internal.filter(inYear);
+  const rows = base.filter(r =>
+    (!S.int.cat.size || S.int.cat.has(r.category)) &&
+    (!S.int.unit || r.unit === S.int.unit) &&
+    matchQ(r, S.int.q, ['category', 'unit', 'topic', 'members', 'award']));
+  const c = countBy(rows, r => r.A);
+  $('#intKpi').innerHTML = kpiHTML([
+    { lbl: '院內總獲獎次數', val: rows.length, unit: '次', sub: yrLabel(), cls: 'orange' },
+    { lbl: '第一名', val: c.get('第一名') || 0, unit: '次', medal: 1, sub: '跨領域＋單領域' },
+    { lbl: '第二名', val: c.get('第二名') || 0, unit: '次', medal: 2, sub: '跨領域＋單領域' },
+    { lbl: '第三名', val: c.get('第三名') || 0, unit: '次', medal: 3, sub: '跨領域＋單領域' },
+    { lbl: '佳作', val: c.get('佳作') || 0, unit: '次', sub: '跨領域＋單領域' },
+    { lbl: '潛力獎', val: c.get('潛力獎') || 0, unit: '次', sub: `得獎單位 ${new Set(rows.map(r => r.unit).filter(Boolean)).size} 個`, cls: 'navy' }
+  ]);
+  yearStack('cIntYear', rows, INT_ORDER, r => r.A, INT_COLOR);
+  hbar('cIntUnit', 'bIntUnit', [...countBy(rows, r => r.unit).entries()].sort((a, b) => b[1] - a[1] || zh(a[0], b[0])));
+  renderTable('int', rows);
+}
+
+/* ================= 03 團隊成員 ================= */
+function renderPer() {
+  const ext = DATA.external.filter(inYear), int = DATA.internal.filter(inYear);
+  const m = new Map();
+  const add = (r, key) => people(r.members).forEach(n => {
+    if (!m.has(n)) m.set(n, { e: 0, i: 0 });
+    m.get(n)[key]++;
+  });
+  ext.forEach(r => add(r, 'e')); int.forEach(r => add(r, 'i'));
+  const list = [...m.entries()].map(([n, v]) => ({ n, e: v.e, i: v.i, t: v.e + v.i }))
+    .sort((a, b) => b.t - a.t || b.e - a.e || zh(a.n, b.n));
+  const both = list.filter(p => p.e && p.i).length;
+  const top = list[0];
+
+  $('#perKpi').innerHTML = kpiHTML([
+    { lbl: '得獎人數', val: list.length, unit: '人', sub: yrLabel(), cls: 'orange' },
+    { lbl: '學會＋院內皆得獎', val: both, unit: '人', sub: '兩類競賽都曾得獎' },
+    { lbl: '得獎總人次', val: list.reduce((s, p) => s + p.t, 0), unit: '人次', sub: '每件作品成員各計一次' },
+    { lbl: '最多得獎', val: top ? esc(top.n) : '—', isName: true, sub: top ? `共 ${top.t} 次（學會 ${top.e}・院內 ${top.i}）` : '', cls: 'navy' }
+  ]);
+
+  const q = S.per.q.trim();
+  const max = list.length ? list[0].t : 1;
+  $('#perBoard').innerHTML = list.slice(0, 20).map((p, i) => `
+    <button class="lb-row ${q && p.n === q ? 'on' : ''}" data-name="${esc(p.n)}" title="學會 ${p.e} 次・院內 ${p.i} 次">
+      <span class="lb-no">${i + 1}</span><span class="lb-name">${esc(p.n)}</span>
+      <span class="lb-bar"><i class="e" style="width:${p.e / max * 100}%"></i><i class="i" style="width:${p.i / max * 100}%"></i></span>
+      <span class="lb-n">${p.t}</span></button>`).join('') || '<div class="hint">此年度範圍沒有資料</div>';
+
+  if (!q) {
+    $('#perTitle').textContent = '得獎紀錄';
+    $('#perCountWrap').style.display = 'none';
+    $('#perResult').innerHTML = '<div class="hint">輸入姓名，或點選左側排行榜<br>即可查看該成員的所有得獎紀錄</div>';
+    return;
+  }
+  const recs = ext.filter(r => String(r.members || '').includes(q)).map(r => ({ src: '學會', year: r.year, org: r.society, k: r.R, orig: r.rank, unit: r.unit, topic: r.topic }))
+    .concat(int.filter(r => String(r.members || '').includes(q)).map(r => ({ src: '院內', year: r.year, org: r.category, k: r.A, orig: r.award, unit: r.unit, topic: r.topic })))
+    .sort((a, b) => (b.year || 0) - (a.year || 0));
+  $('#perTitle').textContent = `「${q}」的得獎紀錄`;
+  $('#perCountWrap').style.display = '';
+  $('#perCount').textContent = recs.length;
+  $('#perResult').innerHTML = `<div class="tbl-wrap" style="max-height:560px"><table>
+    <thead><tr><th>來源</th><th>年度</th><th>學會／競賽別</th><th>名次</th><th>單位</th><th>教案主題</th></tr></thead>
+    <tbody>${recs.length ? recs.map(r => `<tr>
+      <td class="nw"><span class="badge ${r.src === '學會' ? 'bx' : 'bi'}">${r.src}</span></td>
+      <td class="yr">${r.year == null ? '' : r.year}</td>
+      <td class="nw">${esc(r.org)}</td>
+      <td class="nw">${badge(r.k, r.orig)}</td>
+      <td class="nw">${esc(r.unit)}</td>
+      <td class="topic">${br(r.topic)}</td></tr>`).join('')
+      : '<tr><td class="empty" colspan="6">查無此成員的得獎紀錄</td></tr>'}</tbody></table></div>`;
+}
+
+/* ================= 篩選元件 ================= */
+function buildChips(boxId, rows, key, set, onChange) {
+  const cnt = countBy(rows, r => r[key]);
+  const names = [...cnt.keys()].sort((a, b) => cnt.get(b) - cnt.get(a) || zh(a, b));
+  const box = document.getElementById(boxId);
+  box.innerHTML = `<button class="chip ${set.size ? '' : 'on'}" data-v="">全部</button>` +
+    names.map(n => `<button class="chip ${set.has(n) ? 'on' : ''}" data-v="${esc(n)}">${esc(n)}<span class="c">${cnt.get(n)}</span></button>`).join('');
+  box.onclick = e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    const v = b.dataset.v;
+    if (!v) set.clear(); else if (set.has(v)) set.delete(v); else set.add(v);
+    box.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.v ? set.has(x.dataset.v) : !set.size));
+    onChange();
+  };
+}
+function buildUnitSelect(selId, rows, cur) {
+  const cnt = countBy(rows, r => r.unit);
+  const names = [...cnt.keys()].sort((a, b) => zh(a, b));
+  document.getElementById(selId).innerHTML = '<option value="">全部單位</option>' +
+    names.map(n => `<option value="${esc(n)}" ${n === cur ? 'selected' : ''}>${esc(n)}（${cnt.get(n)}）</option>`).join('');
+}
+function buildYearSelects() {
+  const opts = [];
+  if (YMIN != null) for (let y = YMIN; y <= YMAX; y++) opts.push(`<option value="${y}">${y} 年</option>`);
+  $('#yFrom').innerHTML = opts.join(''); $('#yTo').innerHTML = opts.join('');
+  $('#yFrom').value = S.yFrom; $('#yTo').value = S.yTo;
+  $('#yearSpan').textContent = YMIN == null ? '—' : `${YMIN}–${YMAX}`;
+}
+function buildFilters() {
+  buildYearSelects();
+  buildChips('extSoc', DATA.external, 'society', S.ext.soc, renderExt);
+  buildUnitSelect('extUnit', DATA.external, S.ext.unit);
+  buildChips('intCat', DATA.internal, 'category', S.int.cat, renderInt);
+  buildUnitSelect('intUnit', DATA.internal, S.int.unit);
+}
+
+function render() {
+  if (S.tab === 'ext') renderExt();
+  else if (S.tab === 'int') renderInt();
+  else renderPer();
+}
+
+/* ================= 事件 ================= */
+function bind() {
+  $('#tabs').onclick = e => {
+    const b = e.target.closest('.tab'); if (!b) return;
+    S.tab = b.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === b));
+    document.querySelectorAll('main section').forEach(s => s.classList.toggle('show', s.id === 'sec-' + S.tab));
+    render();
+  };
+  const onYear = () => {
+    let a = +$('#yFrom').value, b = +$('#yTo').value;
+    if (a > b) { [a, b] = [b, a]; $('#yFrom').value = a; $('#yTo').value = b; }
+    S.yFrom = a; S.yTo = b; render();
+  };
+  $('#yFrom').onchange = onYear; $('#yTo').onchange = onYear;
+  $('#allYears').onclick = () => { S.yFrom = YMIN; S.yTo = YMAX; $('#yFrom').value = YMIN; $('#yTo').value = YMAX; render(); };
+
+  $('#extUnit').onchange = e => { S.ext.unit = e.target.value; renderExt(); };
+  $('#intUnit').onchange = e => { S.int.unit = e.target.value; renderInt(); };
+  $('#extQ').oninput = debounce(e => { S.ext.q = e.target.value; renderExt(); }, 200);
+  $('#intQ').oninput = debounce(e => { S.int.q = e.target.value; renderInt(); }, 200);
+  $('#perQ').oninput = debounce(e => { S.per.q = e.target.value; renderPer(); }, 200);
+
+  $('#extReset').onclick = () => { S.ext.soc.clear(); S.ext.unit = ''; S.ext.q = ''; $('#extQ').value = ''; buildChips('extSoc', DATA.external, 'society', S.ext.soc, renderExt); $('#extUnit').value = ''; renderExt(); };
+  $('#intReset').onclick = () => { S.int.cat.clear(); S.int.unit = ''; S.int.q = ''; $('#intQ').value = ''; buildChips('intCat', DATA.internal, 'category', S.int.cat, renderInt); $('#intUnit').value = ''; renderInt(); };
+  $('#perReset').onclick = () => { S.per.q = ''; $('#perQ').value = ''; renderPer(); };
+  $('#perBoard').onclick = e => {
+    const b = e.target.closest('.lb-row'); if (!b) return;
+    S.per.q = S.per.q === b.dataset.name ? '' : b.dataset.name;
+    $('#perQ').value = S.per.q; renderPer();
+  };
+
+  ['ext', 'int'].forEach(tab => {
+    document.getElementById(TABLES[tab].head).onclick = e => {
+      const th = e.target.closest('th'); if (!th) return;
+      const st = S[tab].sort, k = th.dataset.k;
+      if (st.k === k) st.d *= -1; else { st.k = k; st.d = k === 'year' ? -1 : 1; }
+      tab === 'ext' ? renderExt() : renderInt();
+    };
+  });
+  document.querySelectorAll('[data-csv]').forEach(b => b.onclick = () => exportCSV(b.dataset.csv));
+  $('#refreshBtn').onclick = () => load(true);
+}
+
+/* ================= 載入 ================= */
+function showLoading(on, text) {
+  $('#loading').classList.toggle('hide', !on);
+  if (text) $('#loadingText').innerHTML = text;
+}
+function onData(d) {
+  if (typeof d === 'string') d = JSON.parse(d);
+  prep(d);
+  buildFilters();
+  $('#updatedAt').textContent = d.updatedAt || '—';
+  const w = (d.warnings || []);
+  $('#warn').style.display = w.length ? 'block' : 'none';
+  $('#warn').textContent = w.length ? '⚠ ' + w.join('；') : '';
+  render();
+  showLoading(false);
+}
+function onErr(err) {
+  showLoading(true, `讀取失敗：${esc(err && err.message ? err.message : err)}　<button class="btn sm" onclick="load(true)">重試</button>`);
+}
+function load(force) {
+  showLoading(true, '<span class="spin"></span>資料讀取中…');
+  if (window.google && google.script && google.script.run) {
+    google.script.run.withSuccessHandler(onData).withFailureHandler(onErr).getData(!!force);
+  } else if (API_URL) {
+    fetch(API_URL + '?format=json' + (force ? '&refresh=1' : '') + '&t=' + Date.now())
+      .then(r => r.json()).then(onData).catch(onErr);
+  } else {
+    onData(DEMO_DATA); // 本機預覽用示範資料
+  }
+}
+
+/* 本機預覽用示範資料（部署到 GAS 後不會使用） */
+const DEMO_DATA = {
+  updatedAt: '示範資料',
+  external: [
+    { society:'台灣醫學教育學會', year:106, rankGroup:'第二名', rank:'第二名', unit:'護理部', topic:'輸血反應之處置」與「ISBAR交班技巧」', members:'江惠英、柯雅婷、黃惠喧、郭麗玲、吳貞望' },
+    { society:'台灣醫學教育學會', year:109, rankGroup:'第一名', rank:'第一名', unit:'護理部', topic:'譫妄評估及處置', members:'章雅茜、羅芳儀、章正俐、柯雅婷、謝靜文、洪聖智' },
+    { society:'台灣醫學教育學會', year:109, rankGroup:'第二名', rank:'第二名', unit:'營養科', topic:'酮酸血症糖尿病人用藥與營養處置', members:'涂美瑜、戴紋君、吳尚賢、邱酩淳、陳明惠' },
+    { society:'台灣醫學教育學會', year:111, rankGroup:'第三名', rank:'第三名', unit:'營養科', topic:'運用高擬真模擬人設備於重症加護病房跨領域OSCE營養照護', members:'毛舒茵、涂美瑜、劉翠娟、杜漢祥、王孟俐' },
+    { society:'台灣醫學教育學會', year:112, rankGroup:'佳作獎', rank:'佳作獎', unit:'耳鼻喉部', topic:'顳骨骨折住院病人之聽力檢查流程與應變處理', members:'魏嘉萱、李國玲、洪素珍、楊晴嵐' },
+    { society:'台灣擬真醫學教育學會', year:108, rankGroup:'第一名', rank:'特優獎', unit:'護理部', topic:'氣管內管異常事件評估與處置', members:'章正俐、舒伊敏、杜雅惠、魏乃菁、柯雅婷、邱旅揚' },
+    { society:'台灣擬真醫學教育學會', year:112, rankGroup:'第一名', rank:'金獎', unit:'耳鼻喉部-聽力', topic:'顳骨骨折住院病人之聽力檢查流程與應變處理', members:'魏嘉萱、李國玲、洪素珍、楊晴嵐' },
+    { society:'台灣擬真醫學教育學會', year:112, rankGroup:'第二名', rank:'銀獎', unit:'營養科', topic:'洗腎病人的營養評估/照顧者\n同理性回應與溝通', members:'涂美瑜、賴春宏、王慧娟\n郭家穎、戴紋君、林珈汶' },
+    { society:'台灣擬真醫學教育學會', year:113, rankGroup:'第二名', rank:'銀獎', unit:'營養科', topic:'超越病痛的關懷~胃癌患者同理心全人跨領域照護', members:'林珈汶、劉美媛、劉祈鳳、蔡牧錫、蔡雨蓉、洪琳慧' },
+    { society:'醫療品質策進會', year:114, rankGroup:'其他', rank:'呼吸治療師MVP', unit:'急重症照護組', topic:'擬真情境類', members:'王盈婷' },
+    { society:'台灣醫事聯合臨床技能發展學會', year:110, rankGroup:'佳作', rank:'佳作', unit:'5A病房', topic:'人工膝關節置換術後病人屈膝困難照護', members:'李怡玲、劉雅婷、黃紹斐、林琪馨、葉玲、謝奇' }
+  ],
+  internal: [
+    { year:109, category:'跨領域', award:'第三名', unit:'12B病房', topic:'化學治療膀胱灌藥法', members:'王思惠、莊琦微、張真、陳姿穎、邱健鎬' },
+    { year:109, category:'跨領域', award:'第一名', unit:'營養科', topic:'酮酸血症糖尿病人用藥與營養處置', members:'戴紋君、吳尚賢、邱酩淳、陳明惠、涂美瑜' },
+    { year:109, category:'跨領域', award:'第三名', unit:'聽力', topic:'溫差測試時病人過度換氣的應變處理', members:'張育瑟、曾惠蘭、李亞璇、魏嘉萱、張君萍' },
+    { year:110, category:'跨領域', award:'第一名', unit:'3C加護病房', topic:'心導管術後肢體評估及相關處置', members:'楊淳綺、黃佩珍、郭惠婷、沈美麗、章正俐' },
+    { year:110, category:'單領域', award:'第二名', unit:'5A病房', topic:'人工膝關節置換術後病人屈膝困難照護', members:'劉雅婷、黃紹斐、葉玲、李怡玲、林佳馨' },
+    { year:110, category:'單領域', award:'佳作', unit:'中醫部', topic:'內科咳嗽', members:'許堯欽' },
+    { year:110, category:'單領域', award:'第二名', unit:'中醫部', topic:'婦科子宮內膜癌', members:'王瑜婷' },
+    { year:110, category:'單領域', award:'第三名', unit:'牙醫部', topic:'牙齒疼痛之鑑別診斷', members:'廖怡清、陳昭安' },
+    { year:111, category:'', award:'潛力獎', unit:'6A病房', topic:'跌倒高危險病人照護', members:'陳又齊、王雅雲' }
+  ],
+  warnings: []
+};
+
+$('#maintainer').textContent = MAINTAINER;
+bind();
+load(false);
+</script>
+</body>
+</html>
