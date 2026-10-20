@@ -24,8 +24,8 @@ button,input,select{font:inherit;color:inherit}
 .num{font-family:'Outfit','Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums}
 
 /* ---------- Header ---------- */
-.topbar{display:flex;justify-content:space-between;gap:16px;padding:22px 0 12px;border-bottom:2px solid var(--navy);font-size:13px;font-weight:700;letter-spacing:.18em}
-.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:30px 0 28px;border-bottom:6px solid var(--navy)}
+.topbar{display:flex;justify-content:space-between;gap:16px;padding:24px 0 0;color:var(--muted);font-size:13px;font-weight:700;letter-spacing:.18em}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:26px 0 30px}
 .hero h1{margin:0;font-size:clamp(34px,5vw,62px);font-weight:900;letter-spacing:.02em;line-height:1.15;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
 .pill-title{background:var(--orange);border:3px solid var(--navy);border-radius:999px;padding:0 .38em;box-shadow:var(--sh)}
 .hero p{margin:16px 0 0;color:var(--muted);font-weight:700;font-size:15px;line-height:1.6}
@@ -39,6 +39,25 @@ button,input,select{font:inherit;color:inherit}
 .btn-orange:hover{background:#FF9126}
 .btn.sm{padding:7px 14px;font-size:14px;border-radius:12px}
 
+/* ---------- Spotlight 主視覺 ---------- */
+.spot{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;gap:40px;background:var(--navy);color:var(--paper);border-radius:28px;padding:40px 52px;box-shadow:8px 8px 0 var(--orange);position:relative;overflow:hidden}
+.spot-lbl{font-weight:900;font-size:18px;letter-spacing:.08em;color:#C5CCDC}
+.spot-num{display:flex;align-items:baseline;gap:10px;margin:6px 0 4px}
+.spot-num b{font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(88px,12vw,168px);line-height:1;color:var(--orange);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.spot-num small{font-size:28px;font-weight:900}
+.spot-range{font-weight:700;font-size:15px;color:#C5CCDC}
+.spot-side{display:grid;gap:14px;position:relative;z-index:1}
+.spot-item{display:flex;justify-content:space-between;align-items:baseline;gap:16px;background:rgba(255,249,239,.07);border-radius:16px;padding:16px 22px;font-weight:900;font-size:16px}
+.spot-item b{font-family:'Outfit',sans-serif;font-weight:800;font-size:38px;line-height:1;font-variant-numeric:tabular-nums}
+.spot-item b small{font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:900;margin-left:4px;color:#C5CCDC}
+.spot-item .k{display:flex;align-items:center;gap:10px}
+.spot-item .k i{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+.totop{position:fixed;right:24px;bottom:28px;z-index:40;width:54px;height:54px;border-radius:50%;border:2.5px solid var(--navy);background:var(--orange);color:var(--navy);font-size:22px;font-weight:900;cursor:pointer;box-shadow:var(--sh-s);display:grid;place-items:center;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
+.totop.show{opacity:1;transform:none;pointer-events:auto}
+.totop:hover{background:#FF9126}
+.totop:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--navy)}
+
 /* ---------- Year bar & tabs ---------- */
 .yearbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:24px 0}
 .flabel{font-weight:900;font-size:15px;white-space:nowrap}
@@ -48,15 +67,15 @@ button,input,select{font:inherit;color:inherit}
 .sel.sm{padding:7px 40px 7px 16px;font-size:14px;max-width:100%}
 .tilde{font-weight:900;font-size:18px}
 
-.tabrow{border-top:2px solid var(--navy);border-bottom:2px solid var(--navy)}
-.tabs{display:flex;gap:12px;flex-wrap:wrap;padding:16px 0}
+.tabrow{position:sticky;top:0;z-index:20;background:rgba(253,240,220,.94);backdrop-filter:blur(6px)}
+.tabs{display:flex;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:14px}
 .tab{border:2.5px solid var(--navy);border-radius:999px;padding:10px 22px;font-weight:900;font-size:16px;background:var(--paper);cursor:pointer}
 .tab .no{font-family:'Outfit',sans-serif;color:var(--orange);margin-right:8px;font-size:13px;font-weight:800}
 .tab.active{background:var(--navy);color:var(--paper)}
 .tab:not(.active):hover{background:var(--white)}
 
 /* ---------- Section ---------- */
-section{display:none;padding:36px 0 12px}
+section{display:none;padding:22px 0 12px}
 section.show{display:block}
 .sec-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:16px;border-bottom:3px solid var(--navy);padding-bottom:12px;margin:0 0 24px}
 .sec-h .no{font-family:'Outfit',sans-serif;font-weight:800;font-size:46px;line-height:1;color:var(--orange);-webkit-text-stroke:1.5px var(--navy)}
@@ -146,7 +165,7 @@ td.empty{text-align:center;color:var(--muted);font-weight:700;padding:42px 14px}
 .hint{display:grid;place-items:center;min-height:260px;color:var(--muted);font-weight:700;text-align:center;line-height:1.8;padding:20px}
 
 /* ---------- Footer / loading ---------- */
-footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--muted)}
+footer{margin-top:40px;padding:18px 84px 34px 0;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--muted)}
 .warn{background:var(--orange-soft);border:2px solid var(--navy);border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;margin-top:20px;display:none}
 .loading{position:fixed;inset:0;background:rgba(253,240,220,.88);display:flex;align-items:center;justify-content:center;z-index:50}
 .loading.hide{display:none}
@@ -159,7 +178,13 @@ footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;disp
   .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
   .grid2,.grid2.rev{grid-template-columns:minmax(0,1fr)}
 }
+@media (max-width:900px){
+  .spot{grid-template-columns:minmax(0,1fr);gap:24px;padding:30px 28px}
+}
 @media (max-width:640px){
+  .spot{padding:26px 20px;border-radius:22px}
+  .spot-item{padding:12px 16px} .spot-item b{font-size:30px}
+  .totop{right:16px;bottom:18px;width:48px;height:48px}
   .wrap{padding:0 16px}
   .topbar{flex-direction:column;gap:6px;letter-spacing:.1em}
   .hero{flex-direction:column;align-items:flex-start}
@@ -195,6 +220,18 @@ footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;disp
       <button class="btn btn-orange" id="refreshBtn">↻ 重新整理</button>
     </div>
   </div>
+  <div class="spot">
+    <div>
+      <div class="spot-lbl">教學部臨床技能中心　累計獲獎</div>
+      <div class="spot-num"><b id="spotTotal">0</b><small>項</small></div>
+      <div class="spot-range" id="spotRange">—</div>
+    </div>
+    <div class="spot-side">
+      <div class="spot-item"><span class="k"><i style="background:var(--orange)"></i>學會競賽</span><b><span id="spotExt">0</span><small>項</small></b></div>
+      <div class="spot-item"><span class="k"><i style="background:#8FA0C8"></i>院內 OSCE 教案競賽</span><b><span id="spotInt">0</span><small>項</small></b></div>
+      <div class="spot-item"><span class="k"><i style="background:var(--gold)"></i>其中第一名</span><b><span id="spotFirst">0</span><small>項</small></b></div>
+    </div>
+  </div>
   <div class="warn" id="warn"></div>
   <div class="yearbar">
     <span class="flabel">年度範圍</span>
@@ -217,7 +254,6 @@ footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;disp
 
   <!-- ============ 01 學會競賽 ============ -->
   <section id="sec-ext" class="show">
-    <div class="sec-h"><span class="no">01</span><h2>學會競賽得獎</h2><span class="note">學會 OSCE 教案／擬真情境類競賽</span></div>
 
     <div class="card panel">
       <div class="frow"><span class="flabel">學會</span><div class="chips" id="extSoc"></div></div>
@@ -255,7 +291,6 @@ footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;disp
 
   <!-- ============ 02 院內 ============ -->
   <section id="sec-int">
-    <div class="sec-h"><span class="no">02</span><h2>院內 OSCE 教案競賽</h2><span class="note">跨領域／單領域教案競賽</span></div>
 
     <div class="card panel">
       <div class="frow"><span class="flabel">競賽別</span><div class="chips" id="intCat"></div></div>
@@ -293,7 +328,6 @@ footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;disp
 
   <!-- ============ 03 團隊成員 ============ -->
   <section id="sec-per">
-    <div class="sec-h"><span class="no">03</span><h2>團隊成員查詢</h2><span class="note">合併學會與院內競賽，姓名以「、」拆分計算</span></div>
 
     <div class="card panel">
       <div class="frow">
@@ -324,6 +358,7 @@ footer{border-top:2px solid var(--navy);margin-top:40px;padding:18px 0 34px;disp
     <span>資料來源：Google 試算表「學會競賽歷年得獎紀錄」</span>
   </footer>
 </main>
+<button class="totop" id="toTop" aria-label="回到最上方" title="回到最上方">↑</button>
 
 <script>
 /* ================= 設定 ================= */
@@ -714,7 +749,33 @@ function buildFilters() {
   buildUnitSelect('intUnit', DATA.internal, S.int.unit);
 }
 
+/* 主視覺數字跳動 */
+const REDUCE_MOTION = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countTo(el, to, dur) {
+  const from = +(el.dataset.v || 0);
+  el.dataset.v = to;
+  if (REDUCE_MOTION || from === to) { el.textContent = to; return; }
+  const t0 = performance.now();
+  cancelAnimationFrame(el._raf);
+  const step = now => {
+    const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * e);
+    if (p < 1) el._raf = requestAnimationFrame(step);
+  };
+  el._raf = requestAnimationFrame(step);
+}
+function renderSpot() {
+  const ext = DATA.external.filter(inYear), int = DATA.internal.filter(inYear);
+  const first = ext.filter(r => r.R === '第一名').length + int.filter(r => r.A === '第一名').length;
+  countTo($('#spotTotal'), ext.length + int.length, 1800);
+  countTo($('#spotExt'), ext.length, 1400);
+  countTo($('#spotInt'), int.length, 1400);
+  countTo($('#spotFirst'), first, 1400);
+  $('#spotRange').textContent = YMIN == null ? '' : (S.yFrom === YMIN && S.yTo === YMAX ? `民國 ${YMIN}–${YMAX} 年歷年累計` : `民國 ${S.yFrom}–${S.yTo} 年`);
+}
+
 function render() {
+  renderSpot();
   if (S.tab === 'ext') renderExt();
   else if (S.tab === 'int') renderInt();
   else renderPer();
@@ -762,6 +823,9 @@ function bind() {
   });
   document.querySelectorAll('[data-csv]').forEach(b => b.onclick = () => exportCSV(b.dataset.csv));
   $('#refreshBtn').onclick = () => load(true);
+  const tt = $('#toTop');
+  addEventListener('scroll', () => tt.classList.toggle('show', scrollY > 400), { passive: true });
+  tt.onclick = () => scrollTo({ top: 0, behavior: REDUCE_MOTION ? 'auto' : 'smooth' });
 }
 
 /* ================= 載入 ================= */
@@ -772,6 +836,7 @@ function showLoading(on, text) {
 function onData(d) {
   if (typeof d === 'string') d = JSON.parse(d);
   prep(d);
+  ['#spotTotal', '#spotExt', '#spotInt', '#spotFirst'].forEach(id => { $(id).dataset.v = 0; $(id).textContent = 0; });
   buildFilters();
   $('#updatedAt').textContent = d.updatedAt || '—';
   const w = (d.warnings || []);
