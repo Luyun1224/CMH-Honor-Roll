@@ -362,7 +362,7 @@ footer{margin-top:40px;padding:18px 84px 34px 0;display:flex;justify-content:spa
 
 <script>
 /* ================= 設定 ================= */
-// 放在 GitHub Pages 時，填入 GAS 網頁應用程式 /exec 網址；放在 GAS 內則留空
+// GAS 網頁應用程式 /exec 網址
 const API_URL = 'https://script.google.com/macros/s/AKfycby5RuJZN40ZrlOz8f7yuLdgOTulMi0OAOvlHsZezIOZj0d9VDkExMVmyNJEF9gVIjhcwQ/exec';
 const MAINTAINER = '資料維護人：教學部 英云 #57425';
 
@@ -856,39 +856,10 @@ function load(force) {
     fetch(API_URL + '?format=json' + (force ? '&refresh=1' : '') + '&t=' + Date.now())
       .then(r => r.json()).then(onData).catch(onErr);
   } else {
-    onData(DEMO_DATA); // 本機預覽用示範資料
+    onErr('尚未設定 API_URL');
   }
 }
 
-/* 本機預覽用示範資料（部署到 GAS 後不會使用） */
-const DEMO_DATA = {
-  updatedAt: '示範資料',
-  external: [
-    { society:'台灣醫學教育學會', year:106, rankGroup:'第二名', rank:'第二名', unit:'護理部', topic:'輸血反應之處置」與「ISBAR交班技巧」', members:'江惠英、柯雅婷、黃惠喧、郭麗玲、吳貞望' },
-    { society:'台灣醫學教育學會', year:109, rankGroup:'第一名', rank:'第一名', unit:'護理部', topic:'譫妄評估及處置', members:'章雅茜、羅芳儀、章正俐、柯雅婷、謝靜文、洪聖智' },
-    { society:'台灣醫學教育學會', year:109, rankGroup:'第二名', rank:'第二名', unit:'營養科', topic:'酮酸血症糖尿病人用藥與營養處置', members:'涂美瑜、戴紋君、吳尚賢、邱酩淳、陳明惠' },
-    { society:'台灣醫學教育學會', year:111, rankGroup:'第三名', rank:'第三名', unit:'營養科', topic:'運用高擬真模擬人設備於重症加護病房跨領域OSCE營養照護', members:'毛舒茵、涂美瑜、劉翠娟、杜漢祥、王孟俐' },
-    { society:'台灣醫學教育學會', year:112, rankGroup:'佳作獎', rank:'佳作獎', unit:'耳鼻喉部', topic:'顳骨骨折住院病人之聽力檢查流程與應變處理', members:'魏嘉萱、李國玲、洪素珍、楊晴嵐' },
-    { society:'台灣擬真醫學教育學會', year:108, rankGroup:'第一名', rank:'特優獎', unit:'護理部', topic:'氣管內管異常事件評估與處置', members:'章正俐、舒伊敏、杜雅惠、魏乃菁、柯雅婷、邱旅揚' },
-    { society:'台灣擬真醫學教育學會', year:112, rankGroup:'第一名', rank:'金獎', unit:'耳鼻喉部-聽力', topic:'顳骨骨折住院病人之聽力檢查流程與應變處理', members:'魏嘉萱、李國玲、洪素珍、楊晴嵐' },
-    { society:'台灣擬真醫學教育學會', year:112, rankGroup:'第二名', rank:'銀獎', unit:'營養科', topic:'洗腎病人的營養評估/照顧者\n同理性回應與溝通', members:'涂美瑜、賴春宏、王慧娟\n郭家穎、戴紋君、林珈汶' },
-    { society:'台灣擬真醫學教育學會', year:113, rankGroup:'第二名', rank:'銀獎', unit:'營養科', topic:'超越病痛的關懷~胃癌患者同理心全人跨領域照護', members:'林珈汶、劉美媛、劉祈鳳、蔡牧錫、蔡雨蓉、洪琳慧' },
-    { society:'醫療品質策進會', year:114, rankGroup:'其他', rank:'呼吸治療師MVP', unit:'急重症照護組', topic:'擬真情境類', members:'王盈婷' },
-    { society:'台灣醫事聯合臨床技能發展學會', year:110, rankGroup:'佳作', rank:'佳作', unit:'5A病房', topic:'人工膝關節置換術後病人屈膝困難照護', members:'李怡玲、劉雅婷、黃紹斐、林琪馨、葉玲、謝奇' }
-  ],
-  internal: [
-    { year:109, category:'跨領域', award:'第三名', unit:'12B病房', topic:'化學治療膀胱灌藥法', members:'王思惠、莊琦微、張真、陳姿穎、邱健鎬' },
-    { year:109, category:'跨領域', award:'第一名', unit:'營養科', topic:'酮酸血症糖尿病人用藥與營養處置', members:'戴紋君、吳尚賢、邱酩淳、陳明惠、涂美瑜' },
-    { year:109, category:'跨領域', award:'第三名', unit:'聽力', topic:'溫差測試時病人過度換氣的應變處理', members:'張育瑟、曾惠蘭、李亞璇、魏嘉萱、張君萍' },
-    { year:110, category:'跨領域', award:'第一名', unit:'3C加護病房', topic:'心導管術後肢體評估及相關處置', members:'楊淳綺、黃佩珍、郭惠婷、沈美麗、章正俐' },
-    { year:110, category:'單領域', award:'第二名', unit:'5A病房', topic:'人工膝關節置換術後病人屈膝困難照護', members:'劉雅婷、黃紹斐、葉玲、李怡玲、林佳馨' },
-    { year:110, category:'單領域', award:'佳作', unit:'中醫部', topic:'內科咳嗽', members:'許堯欽' },
-    { year:110, category:'單領域', award:'第二名', unit:'中醫部', topic:'婦科子宮內膜癌', members:'王瑜婷' },
-    { year:110, category:'單領域', award:'第三名', unit:'牙醫部', topic:'牙齒疼痛之鑑別診斷', members:'廖怡清、陳昭安' },
-    { year:111, category:'', award:'潛力獎', unit:'6A病房', topic:'跌倒高危險病人照護', members:'陳又齊、王雅雲' }
-  ],
-  warnings: []
-};
 
 $('#maintainer').textContent = MAINTAINER;
 bind();
